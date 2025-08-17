@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-with-annotation
+  labels:
+    Team: Devops
+  annotations:
+    Description: This pod build for devops learn about kubernetes
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:latest
+    ports:
+      - containerPort: 80

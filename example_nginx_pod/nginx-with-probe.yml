@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-with-probe
+  labels:
+    statuses_probe: enable
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:latest
+    resources:
+      limits:
+        cpu: 1
+        memory: 512M
+    ports:  
+      - containerPort: 80
+    livenessProbe:
+      httpGet:
+        path: /amba
+        port: 80
+      initialDelaySeconds: 5 #digunakan untuk melakukan delay sebelum mengecek
+      periodSeconds: 5 #waktu interval setiap berapa seconds probe akan di run
+      timeoutSeconds: 1 #pada second keberapa pod / container gagal (timeout)
+      successThreshold: 1 #berapa kali pengulanagan jika gagal untuk menyatakan bahwa pod sehat
+      failureThreshold: 3 #butuh berapa kali pengulangan untuk memastikan bahwa pod gagal(unhealthy)
