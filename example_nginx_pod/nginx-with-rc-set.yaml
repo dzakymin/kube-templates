@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: nginx-rc-set
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: nginx-pod-rc-set
+    template:
+        metadata:
+            name: nginx-pod
+            labels:
+                app: nginx-pod-rc-set #selector dan labels yang berada di metadata template harus sama
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:latest
+                  ports:
+                  -  containerPort: 80
+    

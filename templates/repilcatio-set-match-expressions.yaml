@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: replic-set
+    labels:
+        name: replic-set
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            name: nginx-pod-rc
+        matchExpressions:
+            - key: Team
+              operator: in
+              value: Devops
+    template:
+        metadata:
+            name: nginx-pod
+            labels:
+                Team: Devops
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:latest
+                  ports:
+                  -  containerPorts: 80
+    
+                
+        
