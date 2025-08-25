@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cron-job-backup
+spec:
+  schedule: "*/1 * * * *"
+  timeZone: "Asia/Jakarta"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: cronjob-backup-pod
+        
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: cronjob-backup-container
+              image: khannedy/nodejs-job
+              ports:
+                - containerPort: 80

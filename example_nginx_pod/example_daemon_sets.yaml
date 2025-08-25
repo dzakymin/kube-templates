@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemon-set-nodejs-watcher
+spec:
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - nodejs-app-watcher
+  template:
+    metadata:
+      name: nodejs-app-template-watcher
+      labels:
+        app: nodejs-app-watcher
+    spec:
+      containers:
+        - name: nodejs-container-watcher
+          image: nginx:latest
+          ports:
+            - containerPort: 80

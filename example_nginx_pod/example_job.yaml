@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup-moodle
+  labels:
+    Type: Backup
+spec:
+  completions: 4
+  parallelism: 2
+  template:
+    metadata:
+      name: backup-moodle-job-template
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: moodle-backup-container
+          image: khannedy/nodejs-job
+          ports:
+            - containerPort: 80
