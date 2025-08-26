@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Job
+metadata:
+  name: pod-name
+spec:
+  completions: 5
+  parallelism: 2
+  template:
+    metadata:
+        name: template-job-node-selector
+    spec:
+        nodeSelector:
+            gpu: "true"
+        containers:
+            - name: container-name
+              image: image-name
+              ports:
+                - containerPort: 80
