@@ -38,14 +38,13 @@ spec:
     targetPort: 80
 
 ---
-
 apiVersion: v1
 kind: Pod
 metadata:
-  name: curl
+  name: curl-test
+  labels:
+    name: myapp-curl-test
 spec:
   containers:
-    - name: nginx-curl
-      image: nginx:latest
- #     ports:
-#        - containerPort: 80
+  - name: curl-test-container
+    image: nginx:latest
