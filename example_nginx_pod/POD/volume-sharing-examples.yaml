@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: replic-set
+    labels:
+        name: replic-set
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            name: replicaset
+    template:
+        metadata:
+            name: nginx-pod
+            labels:
+                name: replicaset
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:latest
+                  ports:
+                  -  containerPort: 80
+                  volumeMounts:
+                    - name: content-web-value
+                      mountPath: /usr/share/nginx/html
+                - name: nodejs-app
+                  image: khannedy/nodejs-writer
+                  ports:
+                  -  containerPort: 3000
+                  volumeMounts:
+                    - name: content-web-value
+                      mountPath: /app/html
+            volumes:
+              - name: content-web-value
+                emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-app
+spec:
+  type: NodePort
+  selector:
+    name: replicaset
+  ports:
+  - port: 8080
+    targetPort: 80
+    name: nginx-container-port
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curl-pod
+spec:
+  containers:
+    - name: curl-nginx
+      image: nginx
+      
+
+    
+                
+        

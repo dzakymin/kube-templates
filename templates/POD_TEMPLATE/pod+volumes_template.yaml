@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-name
+spec:
+  volumes:
+    - name: html 
+      emptyDir: {}
+
+  containers:
+    - name: container-name
+      image: image-name
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - mountPath: /app/html
+          name: html

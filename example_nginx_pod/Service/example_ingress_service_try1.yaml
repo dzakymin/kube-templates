@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: replic-set
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            service: app-pod
+    template:
+        metadata:
+            name: app1
+            labels:
+                service: app-pod
+        spec:
+            containers:
+                - name: nginx-container
+                  image: dzaky8/nginxcustom:1.0
+                  ports:
+                  -  containerPort: 80
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: replic-set-second
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            service: app-pod-second
+    template:
+        metadata:
+            name: app2
+            labels:
+                service: app-pod-second
+        spec:
+            containers:
+                - name: nginx-container
+                  image: nginx:latest
+                  ports:
+                  -  containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-gateway-app1
+spec:
+  selector:
+    service: app-pod
+  ports:
+  - port: 8080
+    targetPort: 80
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-gateway-app2
+spec:
+  selector:
+    service: app-pod-second
+  ports:
+  - port: 8081
+    targetPort: 80
+
+
+---
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-cluster-one
+  labels:
+    label-key1: label-value1
+spec:
+  rules:
+    - host: service1.zack.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: service-gateway-app1
+                port:
+                   number: 8080
+    - host: service2.zack.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: service-gateway-app2
+                port:
+                   number: 8081
+        
+                
+        
