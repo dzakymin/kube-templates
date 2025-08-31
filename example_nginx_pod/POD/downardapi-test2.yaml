@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: author-data-config
+data:
+  USERNAME: jakimin
+  HOBBIES: ngonfig
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+data:
+  SECRET_DOC: amFraWdhbnRlbmcK
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+    name: replic-set-nodejs
+    labels:
+        name: replic-set-nodejs
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            name: nodejs-pod
+    template:
+        metadata:
+            name: nodejs-pod
+            labels:
+                name: nodejs-pod
+        spec:
+            containers:
+                - name: nodejs-pod-khannedy
+                  image: khannedy/nodejs-env
+                  ports:
+                  -  containerPort: 3000
+                  env:
+                    - name: POD_NAME
+                      valueFrom:
+                         fieldRef:
+                          fieldPath: "metadata.name"
+                    - name: POD_IP
+                      valueFrom:
+                         fieldRef:
+                          fieldPath: status.podIP
+                    - name: POD_LABEL
+                      valueFrom:
+                         fieldRef:
+                          fieldPath: metadata.labels['name']
+                    - name: AUTHOR
+                      valueFrom:
+                        configMapKeyRef:
+                            name: author-data-config
+                            key: USERNAME
+                    - name: JOB
+                      valueFrom:
+                        configMapKeyRef:
+                            name: author-data-config
+                            key: HOBBIES
+                    - name: FLAG
+                      valueFrom:
+                        secretKeyRef:
+                           name: mysecret
+                           key: SECRET_DOC
+              
+                   
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lbgateway
+spec:
+  type: LoadBalancer
+  selector:
+    name: nodejs-pod
+  ports:
+    - port: 80
+      targetPort: 3000
+    
+                
+        
