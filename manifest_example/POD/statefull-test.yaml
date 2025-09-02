@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: stateful-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 6Gi
+  hostPath:
+    path: /data/location
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefull-test
+spec:
+  # https://github.com/kubernetes/kubernetes/issues/69608
+  serviceName: zack-statefull
+  replicas: 3
+  selector:
+    matchLabels:
+      app_type: nginx
+  volumeClaimTemplates:
+    - metadata:
+        name: stateful-volume-claim
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: 2Gi
+  template:
+    metadata:
+      name: statefull-pod
+      labels:
+         app_type: nginx
+    spec:
+      containers:
+        - name: nginx-container-mysql
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /app/data
+              name: stateful-volume-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app_type: nginx
+  ports:
+    - port: 80
+      targetPort: 80

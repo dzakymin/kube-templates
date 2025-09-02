@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-app-nodejs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app_type: nodejs-write
+  template:
+    metadata:
+      name: pod-name
+      labels:
+        app_type: nodejs-write
+    spec:
+      containers:
+      - name: nodejs-write
+        image: khannedy/nodejs-writer
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+          - mountPath: /app/html
+            name: pvc-nodejs
+      volumes:
+        - name: pvc-nodejs
+          persistentVolumeClaim:
+            claimName: pv-volume-claim
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-name
+spec:
+  type: LoadBalancer
+  selector:
+    app_type: nodejs-write
+  ports:
+    - port: 80
+      targetPort: 3000
