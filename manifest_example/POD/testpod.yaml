@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-ganteng
+spec:
+  containers:
+    - name: nginx-cotainer
+      image: nginx:latest
+      ports:
+        - containerPort: 80
