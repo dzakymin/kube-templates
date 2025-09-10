@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-1-nodejs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      Type-app: nodejs-replica
+  template:
+    metadata:
+      name: nodejs-app
+      labels:
+        Type-app: nodejs-replica
+    spec:
+      volumes:
+        - name: volumes-compres
+      containers:
+        - name: nodejs-khannedy
+          image: khannedy/nodejs-web
+          ports:
+            -  containerPort: 3000
+          resources:
+            requests:
+              cpu: 500m
+              memory: 100Mi
+            limits:
+              cpu: 700m
+              memory: 5000Mi
+          volumeMounts:
+            - mountPath: /app/html
+              name: volumes-compres
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-test
+  labels:
+    Lb-Type: metalb
+spec:
+  type: LoadBalancer
+  selector:
+    Type-app: nodejs-replica
+  ports:
+    - port: 80
+      targetPort: 3000
